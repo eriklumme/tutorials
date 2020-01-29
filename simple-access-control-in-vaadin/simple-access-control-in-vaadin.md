@@ -261,4 +261,4 @@ Testing the application now, we can not access the `MainView` at first. After lo
 
 After clicking the logout button, we can no longer access the main view, unless we log in again. Congratulations, access control is now set up in your application!
 
-The complete code can be found at <>TODO>>
+The complete code can be found [on GitHub](https://github.com/eriklumme/tutorials/tree/master/simple-access-control-in-vaadin).
