@@ -1,6 +1,6 @@
 # Simple Access Control in Vaadin
 
-_Some things are best kept secret._ This goes for data, too. In this tutorial, you will learn to implement a simple access control system using plain Vaadin and Java.
+_Some things are best kept secret._ This goes for data, too. In this tutorial, you will learn how to implement a simple access control system using plain Vaadin and Java.
 
 We will be doing this in four steps: creating the login view, authorizing the user, authenticating the user, and creating the logout button.
 
@@ -12,7 +12,7 @@ After downloading and unzipping the project, it can be run with `mvn jetty:run` 
 
 ## Creating the login screen
 
-Logging in requires a login screen. For simplicity's sake, we will be using Vaadin's [LoginForm](https://vaadin.com/components/vaadin-login/java-examples).
+Logging in requires a login screen. For simplicity's sake, we are using Vaadin's [LoginForm](https://vaadin.com/components/vaadin-login/java-examples).
 
 Let's create a class, `LoginView`, that extends `VerticalLayout`, and that has a private field contianing the `LoginForm`.
 
@@ -25,7 +25,7 @@ public class LoginView extends VerticalLayout {
 
 It's a good practice to defer component initialization until it is being attached, to avoid potentially running costly code for a component that is never displayed to the user. Due to [Flow bug #4595](https://github.com/vaadin/flow/issues/4595), the constructor is run even when access to the component is restricted through the `BeforeEnterEvent`. 
 
-We can do the initialization by overriding the `onAttach` method. To only run it once, we will check if this is the first attach event using the `AttachEvent#isInitialAttach` method.
+We can do the initialization by overriding the `onAttach` method. To only run it once, we check if this is the first attach event using the `AttachEvent#isInitialAttach` method.
 
 #### **LoginView.java**
 ```java
@@ -37,7 +37,7 @@ public void onAttach(AttachEvent event) {
 }
 ```
 
-We can then create the initialization method, where we will instantiate the login form. We will align the form in the center both horizontally and vertically, and we will hide the `Forgot password?` option from the login form before adding it to the layout.
+We can then create the initialization method, where we instantiate the login form. We align the form in the center both horizontally and vertically, and then hide the `Forgot password?` option from the login form before adding it to the layout.
 
 #### **LoginView.java**
 ```java
@@ -54,9 +54,9 @@ private void initialize() {
 
 To enable navigating to the view, we annotate it with `@Route`. When no route is specified, the route will be the class name without "view", in this case `login`.
 
-The login event will also be handled by this view, by implementing `ComponentEventListener<AbstractLogin.LoginEvent>` and adding the view as a listener in the initialization method with `loginForm.addLoginListener(this);`.
+The login event can be handled by this view by implementing `ComponentEventListener<AbstractLogin.LoginEvent>`, and in the initialization method adding the view as a listener with `loginForm.addLoginListener(this);`.
 
-For now, the component event listener method can just set an error on the form, which will display a mesasge that the username or password is incorrect.
+For now, the component event listener method can just set an error on the form, which displays a mesasge that the username or password is incorrect.
 
 #### **LoginView.java**
 ```java
@@ -66,15 +66,15 @@ public void onComponentEvent(AbstractLogin.LoginEvent loginEvent) {
 }
 ```
 
-After rebuilding or restarting the application, we can now navigate to `http://localhost:8080/login`, and see that no matter the username and password we enter, we will always get an error message.
+After rebuilding or restarting the application, we can now navigate to `http://localhost:8080/login`, and see that no matter the username and password we enter, we always get an error message.
 
 ## Authorizing the user
 
-Authorization is the process of determining if a user can perform a certain action. In our case, a user will be authorized to access any view if the user is authenticated. Authorization will be done before entering any view.
+Authorization is the process of determining if a user can perform a certain action. In our case, a user is authorized to access any view if the user is authenticated. Authorization is done before entering any view.
 
-Let's start by creating a class `SecurityService` responsible for checking if the user is authenticated. We will make this a singleton class by creating a private constructor, and returning a static instance in a `getInstance()` method.
+Let's start by creating a class `SecurityService` responsible for checking if the user is authenticated. We're making this a singleton class by creating a private constructor, and returning a static instance in a `getInstance()` method.
 
-> The `getInstance()` method may be `synchronized` to protect against multiple instances being created due to concurrent access. In this case, as no state is stored in the class, we will omit it to improve performance.
+> The `getInstance()` method may be `synchronized` to protect against multiple instances being created due to concurrent access. In this case, as no state is stored in the class, we omit it to improve performance.
 
 ```java
 public class SecurityService {
@@ -92,7 +92,7 @@ public class SecurityService {
 }
 ```
 
-When the user logs in, we will store the username as a session attribute under an arbitrary key. As such, we can check if the user is logged in by checking if that attribute is set.
+When the user logs in, we store the username as a session attribute under an arbitrary key. As such, we can check if the user is logged in by checking if that attribute is set.
 
 #### **SecurityService.java**
 ```java
@@ -107,7 +107,7 @@ public boolean isAuthenticated() {
 }
 ```
 
-Next we need to call this method before entering any view. For this, we will utilize a `BeforeEnterListener` added to every `UI`. To add it as soon as a `UI` is created, we will use a [ServiceInitListener](https://vaadin.com/docs/v14/flow/advanced/tutorial-service-init-listener.html).
+Next we need to call this method before entering any view. For this, we utilize a `BeforeEnterListener` added to every `UI`. To add it as soon as a `UI` is created, we can use a [VaadinServiceInitListener](https://vaadin.com/docs/v14/flow/advanced/tutorial-service-init-listener.html).
 
 Create a class implementing the `VaadinServiceInitListener` interface, and implement the `serviceInit` method.
 
@@ -119,7 +119,7 @@ public class MyServiceInitListener implements VaadinServiceInitListener {
 }
 ```
 
-For this to be registered on startup, we must create the directory `src/main/resources/META-INF/services/`. Here we will create a file called `com.vaadin.flow.server.VaadinServiceInitListener`. The only content of the file will be the fully qualified name of our service init listener, in my case `org.vaadin.erik.MyServiceInitListener`.
+For this to be registered on startup, we must create the directory `src/main/resources/META-INF/services/`. Here we create a file called `com.vaadin.flow.server.VaadinServiceInitListener`. The only content of the file should be the fully qualified name of our service init listener, in my case `org.vaadin.erik.MyServiceInitListener`.
 
 Now that we have hooked onto the service initialization, we can use the initialization event to listener for `UI` initializations. Change our class to also implement `UIInitListener`, and register it through the `ServiceInitEvent`.
 
@@ -131,7 +131,7 @@ public void serviceInit(ServiceInitEvent serviceInitEvent) {
 }
 ```
 
-We will go further down the rabbit hole by implementing the `uiInit` method to add the class as a `BeforeEnterListener` to the newly created `UI`. For this we also need to implement `BeforeEnterListener`.
+We're going further down the rabbit hole by implementing the `uiInit` method to add the class as a `BeforeEnterListener` to the newly created `UI`. For this we also need to implement `BeforeEnterListener`.
 
 #### **MyServiceInitListener.java**
 ```java
@@ -164,15 +164,15 @@ public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
 
 The code includes a special case when navigating to the `LoginView`, to avoid getting stuck in a loop of repeatedly forwarding the user to `LoginView`, triggering the `beforeEnter` method again.
 
-Instead, if the user is logged in, we will forward the user to the `MainView`. No action will be taken otherwise.
+Instead, if the user is logged in, we forward the user to the `MainView`. No action is taken otherwise.
 
-Running the applicaiton now, you will see that the `MainView` is no longer accessible, and navigating to `http://localhost:8080` will forward you to the login view.
+Running the applicaiton now, you can see that the `MainView` is no longer accessible, and navigating to `http://localhost:8080` forwards you to the login view.
 
 ## Authenticating the user
 
 Now we can get on to authenticating the user, by determining if the provided username and password are correct or not.
 
-We will add a method to the `SecurityService` called `authenticate`, that takes a username and password as arguments, and returns `true` if the authentication was successful. It also stores the username in the session in this case.
+We add a method to the `SecurityService` called `authenticate`, that takes a username and password as arguments, and returns `true` if the authentication was successful. It also stores the username in the session in this case.
 
 This tutorial does not cover the authentication process in detail, instead we store the username and password directly in the class file. This means that anyone with access to the source code can see the credentials. As a minimum effort, the password should be hashed using a hashing function like `Bcrypt`.
 
@@ -190,7 +190,7 @@ public boolean authenticate(String username, String password) {
 }
 ```
 
-In the login view, we will call this method, and only set an error if the method returned false. Otherwise, we will redirect the user to the `MainView`. As we now have hardcoded the value `MainView.class` twice in the project, we will add a method in the security service that returns the default view, and change the usages to use this method.
+In the login view, we call this method, and only set an error if the method returned false. Otherwise, we redirect the user to the `MainView`. As we now have hardcoded the value `MainView.class` twice in the project, we should add a method in the security service that returns the default view, and change the usages to use this method.
 
 #### **LoginView.java**
 ```java
@@ -217,9 +217,9 @@ At this point, we can log in to the application with the credentials `admin`/`pa
 
 ## Logging out
 
-To be able to log out, we need a method in the `SecurityService` for logging out. In this method we will do three things:
+To be able to log out, we need a method in the `SecurityService` for logging out. This method does three things:
 
-* We will close the Vaadin session, causing a new one to be created upon the next navigation, and as such the username will no longer be available as a session attribute.
+* It closes the Vaadin session, causing a new one to be created upon the next navigation, and as such the username is no longer available as a session attribute.
 * The Vaadin session is always contained within a wrapped session, e.g. the actual `HttpSession`. In case we have stored any information here, it should be invalidated as well.
 * Finally, the user should be redirected to the login view.
 
