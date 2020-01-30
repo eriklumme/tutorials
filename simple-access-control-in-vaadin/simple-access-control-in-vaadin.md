@@ -14,7 +14,7 @@ After downloading and unzipping the project, it can be run with `mvn jetty:run` 
 
 Logging in requires a login screen. For simplicity's sake, we are using Vaadin's [LoginForm](https://vaadin.com/components/vaadin-login/java-examples).
 
-Let's create a class, `LoginView`, that extends `VerticalLayout`, and that has a private field contianing the `LoginForm`.
+Let's create a class, `LoginView`, that extends `VerticalLayout`, and that has a private field containing the `LoginForm`.
 
 ```java
 public class LoginView extends VerticalLayout {
@@ -56,7 +56,7 @@ To enable navigating to the view, we annotate it with `@Route`. When no route is
 
 The login event can be handled by this view by implementing `ComponentEventListener<AbstractLogin.LoginEvent>`, and in the initialization method adding the view as a listener with `loginForm.addLoginListener(this);`.
 
-For now, the component event listener method can just set an error on the form, which displays a mesasge that the username or password is incorrect.
+For now, the component event listener method can just set an error on the form, which displays a message that the username or password is incorrect.
 
 #### **LoginView.java**
 ```java
@@ -121,7 +121,7 @@ public class MyServiceInitListener implements VaadinServiceInitListener {
 
 For this to be registered on startup, we must create the directory `src/main/resources/META-INF/services/`. Here we create a file called `com.vaadin.flow.server.VaadinServiceInitListener`. The only content of the file should be the fully qualified name of our service init listener, in my case `org.vaadin.erik.MyServiceInitListener`.
 
-Now that we have hooked onto the service initialization, we can use the initialization event to listener for `UI` initializations. Change our class to also implement `UIInitListener`, and register it through the `ServiceInitEvent`.
+Now that we have hooked onto the service initialization, we can use the initialization event to listen for `UI` initializations. Change our class to also implement `UIInitListener`, and register it through the `ServiceInitEvent`.
 
 #### **MyServiceInitListener.java**
 ```java
@@ -166,7 +166,7 @@ The code includes a special case when navigating to the `LoginView`, to avoid ge
 
 Instead, if the user is logged in, we forward the user to the `MainView`. No action is taken otherwise.
 
-Running the applicaiton now, you can see that the `MainView` is no longer accessible, and navigating to `http://localhost:8080` forwards you to the login view.
+Running the application now, you can see that the `MainView` is no longer accessible, and navigating to `http://localhost:8080` forwards you to the login view.
 
 ## Authenticating the user
 
