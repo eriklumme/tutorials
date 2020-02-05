@@ -215,20 +215,21 @@ At this point, we can log in to the application with the credentials `admin`/`pa
 
 ## Logging out
 
-To be able to log out, we need a method in the `SecurityService` for logging out. This method does three things:
+To be able to log out, we need a method in the `SecurityService` for logging out. This method does two things:
 
-* It closes the Vaadin session, causing a new one to be created upon the next navigation. This means that the username is no longer available as a session attribute.
-* It invalidates any information that may be stored within a wrapped session. The Vaadin session is always contained within a wrapped session, for example, the actual `HttpSession`.
-* Finally, it redirects the user to the login view.
+
+* It invalidates the wrapped `HttpSession`, closing all `VaadinSession` instances that it contains. This causes a new `VaadinSession` to be created upon the next navigation, effectively clearing the stored user.
+* It redirects the user to the login view.
 
 #### **SecurityService.java**
 ```java
 public void logOut() {
-    VaadinSession.getCurrent().close();
     VaadinSession.getCurrent().getSession().invalidate();
     UI.getCurrent().navigate(LoginView.class);
 }
 ```
+
+> _All servlets in a WAR-file share the same `HttpSession`, but have their own `VaadinSession` instances. If you only want to close a particular Vaadin session, call `VaadinSession.getCurrent().close()`._
 
 Now we need to call this method from somewhere. We add a button for logging out to the `MainView`, and at the same time move all initialization to `onAttach`, as we did in the login view. We also remove the default components from the main view.
 
